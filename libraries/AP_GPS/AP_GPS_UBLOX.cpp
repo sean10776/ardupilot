@@ -1402,6 +1402,12 @@ AP_GPS_UBLOX::_parse_gps(void)
                 GCS_SEND_TEXT(MAV_SEVERITY_INFO,
                                 "Unexpected state %d", _buffer.pvt.flags);
                 state.status = AP_GPS::GPS_OK_FIX_3D;
+                if (_buffer.pvt.flags & 0b00100000 || _buffer.pvt.flags & 0b00000010)
+                    state.status = AP_GPS::GPS_OK_FIX_3D_DGPS;
+                if (_buffer.pvt.flags & 0b01000000)  // carrsoln - float
+                    state.status = AP_GPS::GPS_OK_FIX_3D_RTK_FLOAT;
+                if (_buffer.pvt.flags & 0b10000000)  // carrsoln - fixed
+                    state.status = AP_GPS::GPS_OK_FIX_3D_RTK_FIXED;
                 break;
             case 5:
                 state.status = AP_GPS::NO_FIX;
